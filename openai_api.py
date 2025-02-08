@@ -1,19 +1,21 @@
-import google.generativeai as genai
-from config import GEMINI_API_KEY
+import together
+from config import TOGETHER_API_KEY
 
-# Configure API Key
-genai.configure(api_key=GEMINI_API_KEY)
+together.api_key = TOGETHER_API_KEY
 
 def generate_response(user_id, user_input, mood="flirty"):
-    """Send user input to Google Gemini AI and get Trisha's response."""
-    model = genai.GenerativeModel("gemini-pro")
-    
+    """Send user input to Mistral/Nous-Hermes AI and get Trisha's response."""
     prompt = (
         "Tum Trisha ho, ek ladki jo Hindi me baat karti hai magar English letters me likhti hai (Hinglish). "
         f"Tumhara mood: {mood}. Tum thodi naughty, flirty aur masti bhari ho. User ke saath masti bhari baatein karo.\n"
         f"User: {user_input}\nTrisha:"
     )
 
-    response = model.generate_content(prompt)
+    response = together.Completion.create(
+        model="mistralai/Mistral-7B-Instruct",  
+        prompt=prompt,
+        max_tokens=200,
+        temperature=0.7
+    )
     
-    return response.text.strip()
+    return response["choices"][0]["text"].strip()
